@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" />
+    <link href="https://www.temperaturaaqui.com.br/assets/css/style.css" />
+</head>
+<body>
+        <div class="row">
+                <div class="col-md-12">
+                  <div class="card">
+                      <div class="card-header">
+                          <h5>Temperatura</h5>
+                      </div>
+                      <div class="card-block">
+                        <div id="temperatura" style="width: 100%;height:400px;"></div>
+                      </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                  <div class="col-md-12">
+                      <div class="card">
+                          <div class="card-header">
+                              <h5>Umidade</h5>
+                          </div>
+                          <div class="card-block">
+                              <div id="umidade" style="width: 100%;height:400px;"></div>
+                            </div>
+                      </div>
+                  </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="card">
+                    <div class="card-header">
+                      <h5>Pressão atmosférica</h5>
+                    </div>
+                    <div class="card-block">
+                        <div id="pressao" style="width: 100%;height:400px;"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.0-rc.2/echarts.common.min.js"></script>
+    <script>
+        window.onload = function() {
+            fetch('response.json')
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(myJson) {
+                montaGraficos(myJson);
+            }); 
+        };
+        function montaGraficos(data) {
+            // based on prepared DOM, initialize echarts instance
+            var chartTemperatura = echarts.init(document.getElementById('temperatura'));
+            var chartUmidade = echarts.init(document.getElementById('umidade'));
+            var chartPressao = echarts.init(document.getElementById('pressao'));
+
+            var xValues = [];
+            var yValuesTemperatura = [];
+            var yValuesUmidade = [];
+            var yValuesPressao = [];
+
+            var countItem = 0;
+            let lastDay;
+            let lastHour;
+            let currentDate;
+
+            var dateFmtOptions = { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' };
+
+            data.historico.forEach(function(item) {
+                currentDate = new Date(item.timestamp);
+
+                // if ((lastDay == null && lastHour == null) || 
+                //     (lastDay != currentDate.getDate() || currentDate.getHours() > lastHour)) {
+                //         let sub = currentDate.getDay() + ' ' + currentDate.getHours() + 'h';
+
+                //         //xValues.push(sub);
+                //         xValues.push(currentDate);
+                //         yValuesTemperatura.push(item.t);
+                //         yValuesUmidade.push(item.u);
+                //         yValuesPressao.push(item.p - 1000);
+                // }
+
+                countItem++;
+                if (countItem == 8) {
+                    countItem = 0;
+                    if (item.t > -10) {
+                        xValues.push(new Date(item.timestamp).toLocaleDateString('pt-BR', dateFmtOptions));
+                        yValuesTemperatura.push(item.t);
+                        yValuesUmidade.push(item.u);
+                        yValuesPressao.push(item.p - 1000);
+                    }
+                }
+
+                lastDay = currentDate.getDate();
+                lastHour = currentDate.getHours();
+            });
+
+            
+
+            // specify chart configuration item and data
+            var optionTemperatura = {
+            xAxis: {
+                type: 'category',
+                data: xValues
+            },
+            tooltip: {
+                trigger: 'axis',
+                formatter: function(params) {
+                    let date = params[0].name
+                    let temp = params[0].data;
+                    return date + ' '  + temp + 'ºC';
+                }
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [{
+                data: yValuesTemperatura,
+                type: 'line'
+            }]
+            };
+
+            var optionUmidade = {
+            xAxis: {
+                type: 'category',
+                data: xValues
+            },
+            tooltip: {
+                trigger: 'axis',
+                formatter: function(params) {
+                    let date = params[0].name
+                    let umid = params[0].data;
+                    return date + ' '  + umid + '%';
+                }
+            },
+            yAxis: {
+                type: 'value'
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [{
+                data: yValuesUmidade,
+                type: 'line'
+            }]
+            };
+
+            var optionPressao = {
+            xAxis: {
+                type: 'category',
+                data: xValues
+            },
+            tooltip: {
+                trigger: 'axis',
+                formatter: function(params) {
+                    let date = params[0].name
+                    let umid = params[0].data;
+                    return date + ' '  + umid.toFixed(2) + 'hPa';
+                }
+            },
+            yAxis: {
+                type: 'value'
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [{
+                data: yValuesPressao,
+                type: 'line'
+            }]
+            };
+            // use configuration item and data specified to show chart
+            chartTemperatura.setOption(optionTemperatura);                              
+            chartUmidade.setOption(optionUmidade);                              
+            chartPressao.setOption(optionPressao);                              
+        }
+
+    </script>
+</body>
+</html>
