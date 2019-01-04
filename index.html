@@ -74,35 +74,19 @@
             let lastHour;
             let currentDate;
 
-            var dateFmtOptions = { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' };
+            /*>>*/var dateFmtOptions = { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' };
 
             data.historico.forEach(function(item) {
-                currentDate = new Date(item.timestamp);
-
-                // if ((lastDay == null && lastHour == null) || 
-                //     (lastDay != currentDate.getDate() || currentDate.getHours() > lastHour)) {
-                //         let sub = currentDate.getDay() + ' ' + currentDate.getHours() + 'h';
-
-                //         //xValues.push(sub);
-                //         xValues.push(currentDate);
-                //         yValuesTemperatura.push(item.t);
-                //         yValuesUmidade.push(item.u);
-                //         yValuesPressao.push(item.p - 1000);
-                // }
-
                 countItem++;
                 if (countItem == 8) {
                     countItem = 0;
                     if (item.t > -10) {
-                        xValues.push(new Date(item.timestamp).toLocaleDateString('pt-BR', dateFmtOptions));
+                        /*>>*/xValues.push(new Date(item.timestamp).toLocaleDateString('pt-BR', dateFmtOptions));
                         yValuesTemperatura.push(item.t);
                         yValuesUmidade.push(item.u);
                         yValuesPressao.push(item.p - 1000);
                     }
                 }
-
-                lastDay = currentDate.getDate();
-                lastHour = currentDate.getHours();
             });
 
             
@@ -113,14 +97,14 @@
                 type: 'category',
                 data: xValues
             },
-            tooltip: {
-                trigger: 'axis',
-                formatter: function(params) {
-                    let date = params[0].name
-                    let temp = params[0].data;
-                    return date + ' '  + temp + 'ºC';
-                }
-            },
+            /*>>*/tooltip: {
+            /*>>*/    trigger: 'axis',
+            /*>>*/    formatter: function(params) {
+            /*>>*/        let date = params[0].name
+            /*>>*/        let temp = params[0].data;
+            /*>>*/        return date + ' '  + temp + 'ºC';
+            /*>>*/    }
+            /*>>*/},
             yAxis: {
                 type: 'value'
             },
@@ -135,14 +119,14 @@
                 type: 'category',
                 data: xValues
             },
-            tooltip: {
-                trigger: 'axis',
-                formatter: function(params) {
-                    let date = params[0].name
-                    let umid = params[0].data;
-                    return date + ' '  + umid + '%';
-                }
-            },
+            /*>>*/tooltip: {
+            /*>>*/    trigger: 'axis',
+            /*>>*/    formatter: function(params) {
+            /*>>*/        let date = params[0].name
+            /*>>*/        let umid = params[0].data;
+            /*>>*/        return date + ' '  + umid + '%';
+            /*>>*/    }
+            /*>>*/},
             yAxis: {
                 type: 'value'
             },
@@ -160,14 +144,14 @@
                 type: 'category',
                 data: xValues
             },
-            tooltip: {
-                trigger: 'axis',
-                formatter: function(params) {
-                    let date = params[0].name
-                    let umid = params[0].data;
-                    return date + ' '  + umid.toFixed(2) + 'hPa';
-                }
-            },
+            /*>>*/tooltip: {
+            /*>>*/    trigger: 'axis',
+            /*>>*/    formatter: function(params) {
+            /*>>*/        let date = params[0].name
+            /*>>*/        let umid = params[0].data;
+            /*>>*/        return date + ' '  + umid.toFixed(2) + 'hPa';
+            /*>>*/    }
+            /*>>*/},
             yAxis: {
                 type: 'value'
             },
